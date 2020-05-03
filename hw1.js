@@ -8,7 +8,7 @@ const getData = (term) => {
             bubbleChart(data[term - 1]);
         });
 };
-getData(78);
+getData(1);
 
 
 
@@ -16,6 +16,11 @@ const commStats = (data) => {
     let comName = data.community_area_name;
     let capitaIncome = '$' + data.per_capita_income_.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
     let hardship = data.hardship_index;
+
+    if (!hardship) {
+        hardship = "Not available";
+    }
+
 
     let community_template = `<div class="row">
     <div class="col-4">
