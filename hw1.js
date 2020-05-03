@@ -1,117 +1,146 @@
-const getData = () => {
+const getData = (term) => {
     fetch('https://data.cityofchicago.org/resource/kn9c-c2s2.json')
         .then(response => response.json())
         .then(data => {
-            console.log(data[0]);
-            console.log(data[0][1]);
-            // let dataset = {
-            //     "children": data[0]
-            // };
-            bubbleChart(data[0]);
+            console.log(data);
+
+            commStats(data[term - 1]);
+            bubbleChart(data[term - 1]);
         });
 };
-getData();
+getData(78);
+
+
+
+const commStats = (data) => {
+    let comName = data.community_area_name;
+    let capitaIncome = '$' + data.per_capita_income_.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    let hardship = data.hardship_index;
+
+    let community_template = `<div class="row">
+    <div class="col-4">
+        <h3>${comName}</h3>
+        <p>Per Capita Income: ${capitaIncome}</p>
+        <p>Hardship Index: ${hardship}</p>
+    </div>
+    <div class="col-6" id="bubble">
+    </div>
+</div>`;
+    document.querySelector("#community").innerHTML = community_template;
+
+
+};
 
 const bubbleChart = (data) => {
     let comName = data.community_area_name;
     let dataset = {
         "children": [{
-                "title": "Percent occupied housing units with more than one person per room",
+                "title": "Crowded housing",
+                "description": "Percent occupied housing units with more than one person per room",
                 "value": data.percent_of_housing_crowded
             }, {
-                "title": "Percent of households living below the federal poverty level",
+                "title": "Living below poverty",
+                "description": "Percent of households living below the federal poverty level",
                 "value": data.percent_households_below_poverty
             }, {
-                "title": "Percent of persons over the age of 16 years that are unemployed",
+                "title": "Unemployed",
+                "description": "Percent of persons over the age of 16 years that are unemployed",
                 "value": data.percent_aged_16_unemployed
             }, {
-                "title": "Percent of persons over the age of 25 years without a high school education",
+                "title": "No high school education",
+                "description": "Percent of persons over the age of 25 years without a high school education",
                 "value": data.percent_aged_25_without_high_school_diploma
             }, {
-                "title": "Percent of the population under 18 or over 64 years of age (i.e., dependency)",
+                "title": "Age under 18 or over 64",
+                "description": "Percent of the population under 18 or over 64 years of age (i.e., dependency)",
                 "value": data.percent_aged_under_18_or_over_64
-            }, {
-                "title": "Per capita income",
-                "value": data.per_capita_income_
-            },
-            {
-                "title": "Hardship Index",
-                "value": data.hardship_index
             }
 
         ]
     };
 
 
+    var diameter = 500;
+    var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
-    let margin = { top: 35, right: 145, bottom: 35, left: 45 },
-        width = 700 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+    //edited the responsive bar code to apply to bubble chart
+    default_height = 500;
 
-    // scale to ordinal because x axis is not numerical
-    var x = d3.scaleBand().rangeRound([0, width]).padding(0.1);
 
-    //scale to numerical value by height
-    var y = d3.scaleLinear().range([height, 0]);
+    var bubble = d3.pack(dataset)
+        .size([diameter, diameter])
+        .padding(.5);
 
-    var chart = d3.select("#chart").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    var xAxis = d3.axisBottom(x); //orient bottom because x-axis will appear below the bars
+    var svg = d3.select("#bubble")
+        .append("svg")
+        .attr("width", diameter)
+        .attr("height", diameter)
+        .attr("class", "bubble");
 
-    var yAxis = d3.axisLeft(y);
-
-    x.domain(data.map(function(d) {
-        return d.title
-    }));
-    y.domain([0, d3.max(data, function(d) {
-        return d.value
-    })]);
-
-    var bar = chart.selectAll("g")
-        .data(data)
-        .enter();
-
-    bar.append("rect")
-        .attr("y", function(d) {
-            return y(d.value);
-        })
-        .attr("x", function(d, i) {
-            return x(d.title);
-        })
-        .attr("height", function(d) {
-            return height - y(d.value);
-        })
-        .attr("width", x.bandwidth()); //set width base on range on ordinal data
-
-    bar.append("text")
-        .attr("y", function(d) {
-            return y(d.value) - 15;
-        })
-        .attr("x", function(d, i) {
-            return x(d.title);
-        })
-        .attr("dy", ".75em")
-        .text(function(d) {
+    var nodes = d3.hierarchy(dataset)
+        .sum(function(d) {
             return d.value;
         });
 
-    chart.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
 
-    chart.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("responses");
+    var node = svg.selectAll(".node")
+        .data(bubble(nodes).descendants())
+        .enter()
+        .filter(function(d) {
+            return !d.children
+        })
+        .append("g")
+        .on('mouseover', function(d, i) {
+            d3.select(this).transition()
+                .duration('100')
+                .attr('opacity', '.8');
+        })
+        .on('mouseout', function(d, i) {
+            d3.select(this).transition()
+                .duration('100')
+                .attr('opacity', '1');
+        })
+        .attr("class", "node")
+        .attr("transform", function(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
 
+    node.append("title")
+        .text(function(d) {
+            return d.title;
+        });
+
+    node.append("circle")
+        .attr("r", function(d) {
+            return d.r;
+        })
+        .style("fill", function(d, i) {
+            return color(i);
+        });
+
+    node.append("text")
+        .attr("dy", ".2em")
+        .style("text-anchor", "middle")
+        .text(function(d) {
+            return d.data.title;
+        })
+        .attr("font-size", function(d) {
+            return d.r / 6;
+        })
+        .attr("fill", "white");
+
+    node.append("text")
+        .attr("dy", "1.3em")
+        .style("text-anchor", "middle")
+        .text(function(d) {
+            return d.data.value.toString() + '%';
+        })
+        .attr("font-size", function(d) {
+            return d.r / 5;
+        })
+        .attr("fill", "white");
+
+    d3.select(self.frameElement)
+        .style("height", diameter + "px");
 
 };
