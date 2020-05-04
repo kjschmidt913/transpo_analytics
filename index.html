@@ -23,16 +23,6 @@
         </p>
     </div>
 
-    <!-- <div class="row">
-        <div class="col-4">
-            <h3>Chicago Overall</h3>
-            <p>Per Capita Income: $28,202</p>
-            <p>Hardship Index: n/a</p>
-        </div>
-        <div class="col-6" id="bubble-chi">
-            <img src="chi.png" />
-        </div>
-    </div> -->
 
     <div id="community" class="mt-4"></div>
 
@@ -122,8 +112,51 @@
     <button type="button" class="btn btn-outline-primary mt-1" onClick="getData(76);">O'Hare</button>
     <button type="button" class="btn btn-outline-primary mt-1" onClick="getData(77);">Edgewater</button>
 
+    <div class="mt-5">
+        <div class="jumbotron mt-4">
+            <h1>Hardship Index and Per Capita Income</h1>
+            <p>These two data visualizations show communities with a Hardship Index under 20 (top graph) and communities with a Hardship Index above 78 (bottom graph) alongside their per capita income. Data is from the <a href="https://data.cityofchicago.org/Health-Human-Services/Census-Data-Selected-socioeconomic-indicators-in-C/kn9c-c2s2"
+                    target="blank">City of Chicago.</a>
+            </p>
+        </div>
 
+        <div class='tableauPlaceholder' id='viz1588616415246' style='position: relative'><noscript><a href='#'><img
+                        alt=' '
+                        src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;hw&#47;hw1_15886163602110&#47;Dashboard1&#47;1_rss.png'
+                        style='border: none' /></a></noscript><object class='tableauViz' style='display:none;'>
+                <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                <param name='embed_code_version' value='3' />
+                <param name='site_root' value='' />
+                <param name='name' value='hw1_15886163602110&#47;Dashboard1' />
+                <param name='tabs' value='no' />
+                <param name='toolbar' value='yes' />
+                <param name='static_image'
+                    value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;hw&#47;hw1_15886163602110&#47;Dashboard1&#47;1.png' />
+                <param name='animate_transition' value='yes' />
+                <param name='display_static_image' value='yes' />
+                <param name='display_spinner' value='yes' />
+                <param name='display_overlay' value='yes' />
+                <param name='display_count' value='yes' />
+                <param name='filter' value='publish=yes' /></object></div>
 
+    </div>
+    <script type='text/javascript'>
+        var divElement = document.getElementById('viz1588616415246');
+        var vizElement = divElement.getElementsByTagName('object')[0];
+        if (divElement.offsetWidth > 800) {
+            vizElement.style.width = '1000px';
+            vizElement.style.height = '827px';
+        } else if (divElement.offsetWidth > 500) {
+            vizElement.style.width = '1000px';
+            vizElement.style.height = '827px';
+        } else {
+            vizElement.style.width = '100%';
+            vizElement.style.height = '727px';
+        }
+        var scriptElement = document.createElement('script');
+        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+    </script>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.6.0/d3.min.js "></script>
