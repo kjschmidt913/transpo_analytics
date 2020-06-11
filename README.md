@@ -11,4 +11,4 @@ and a Transit Score (calculated by WalkScore), based on proximity to various kin
 
 Thus far, there does not appear to be any definitive relationship between the two measures. More research is required. 
 
-Open `index.html` in your browser to see some of our results.
+You can see some of our results and interactive visualizations [here](https://kjschmidt913.github.io/transpo_analytics/).
